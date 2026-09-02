@@ -1,228 +1,182 @@
-# RezoNet — un model de limbaj construit de la zero
+# RezoNet — a language model built from scratch
 
-Model de secvență cu arhitectură proprie, antrenat de la inițializare aleatoare.
-Nu pornește de la greutățile, tokenizatorul sau structura vreunui model existent
-și nu folosește niciun framework de învățare automată: motorul de
-autodiferențiere, optimizatorul și cele două nuclee de calcul sunt scrise aici,
-peste NumPy.
+Sequence model with custom architecture, trained from random initialization.
+It does not start from the weights, tokenizer, or structure of any existing model, and uses no machine learning framework: the auto-differentiation engine, optimizer, and computation kernels are written from scratch on top of NumPy.
 
 ---
 
-## Ideea
+## The Concept
 
-Un transformer își amintește **recitind** tot contextul la fiecare pas. RezoNet
-își amintește **rezonând**: fiecare canal este un oscilator amortizat, acordat pe
-o frecvență proprie. Tokenul curent îl lovește, iar ce a rămas din loviturile
-anterioare este memoria. Trecutul nu se recitește — el continuă să vibreze.
+A Transformer remembers by **re-reading** the entire context at every step. RezoNet remembers by **resonating**: each channel is a damped oscillator tuned to its own natural frequency. The current token hits it, and what remains from previous impacts is the memory. The past is not re-read — it keeps vibrating.
 
-Un bloc are două etaje.
+A block consists of two stages.
 
-**1. Rezonanță.** Starea fiecărui canal *k* este un număr complex care se rotește
-și se stinge:
+**1. Resonance.** The state of each channel *k* is a complex number that rotates and decays:
 
 ```
 s_t = ρ_t · e^(i·ω_k) · s_{t-1} + (u_t + i·v_t)
 ```
 
-- `ω_k` — frecvența proprie a canalului, învățată, inițializată logaritmic.
-- `ρ_t = exp(−softplus(λ_k)·(1 + g_t))` — cât de mult reține canalul. Termenul
-  `g_t` se calculează din tokenul curent, deci **uitarea depinde de conținut**:
-  modelul poate șterge starea când textul o cere.
-- Recurența este liniară în stare, deci stabilă: `|ρ| < 1` garantează că nimic nu
-  explodează, oricât de lungă e secvența.
+- `ω_k` — channel natural frequency, learned, logarithmically initialized.
+- `ρ_t = exp(−softplus(λ_k)·(1 + g_t))` — how much the channel retains. The term `g_t` is computed from the current token, so **forgetting is content-dependent**: the model can clear state when the text requires it.
+- The recurrence is linear in state, hence stable: `|ρ| < 1` guarantees nothing explodes, no matter how long the sequence is.
 
-Citirea folosește partea reală, partea imaginară **și anvelopa** `|s| = √(a²+b²)`.
-Anvelopa este partea neliniară a etajului și este invariantă la fază — răspunde
-la *cât* de mult a rezonat un tipar, indiferent *unde* a început.
+Reading uses the real part, imaginary part, **and the envelope** `|s| = √(a²+b²)`.
+The envelope is the non-linear part of the stage and is phase-invariant — it responds to *how much* a pattern has resonated, regardless of *where* it started.
 
-**2. Legare și dezlegare holografică.** În loc de atenție și în loc de un
-perceptron, blocul folosește algebra vectorilor distribuiți:
+**2. Holographic Binding and Unbinding.** Instead of attention and instead of a perceptron, the block uses Vector Symbolic Architecture (distributed vector algebra):
 
 ```
-leagă:      z₁ = p ⊛ q          (convoluție circulară)
-interoghează: z₂ = p ⊛ q̃         (corelație circulară — operația inversă)
+bind:      z₁ = p ⊛ q          (circular convolution)
+query:     z₂ = p ⊛ q̃         (circular correlation — the inverse operation)
 ```
 
-Convoluția amestecă multiplicativ toate perechile de trăsături în O(D log D), nu
-O(D²). Corelația este *interogarea*: extrage din starea suprapusă componenta
-asociată unei chei. Amândouă se calculează prin FFT.
+Convolution multiplicatively mixes all feature pairs in O(D log D), not O(D²). Correlation is the *query*: it extracts the component associated with a key from the superimposed state. Both are computed via FFT.
 
-### Trei proprietăți care ies din construcție
+### Three Built-In Properties
 
 | | |
 |---|---|
-| **Fără embedding-uri de poziție** | Faza acumulată a fiecărui oscilator spune de cât timp a intrat un semnal. Poziția nu se adaugă — se măsoară. |
-| **Cost constant la generare** | Un token costă la fel indiferent dacă în urmă sunt 10 sau 10.000 de caractere. Atenția costă O(T). |
-| **Memorie multi-scală** | Canalele pornesc cu constante de timp de la ~1 la ~1000 de caractere; antrenarea le rearanjează singură. |
+| **No position embeddings** | The accumulated phase of each oscillator reveals how long ago a signal entered. Position is not added — it is measured. |
+| **Constant generation cost** | A token costs the same whether 10 or 10,000 characters lie behind it. Attention costs O(T). |
+| **Multi-scale memory** | Channels start with time constants from ~1 to ~1000 characters; training rearranges them automatically. |
 
-### Ce este nou și ce nu
+### What Is New and What Is Not
 
-Onest: **recurența liniară cu stare complexă diagonală** aparține aceleiași
-familii matematice ca modelele moderne de tip state-space, iar **legarea prin
-convoluție circulară** vine din reprezentările holografice reduse (Plate, 1995).
-Niciuna nu e inventată aici.
+To be honest: **linear recurrence with diagonal complex state** belongs to the same mathematical family as modern state-space models (SSMs), and **binding via circular convolution** comes from Holographic Reduced Representations (Plate, 1995). Neither was invented here.
 
-Ce este propriu acestui model: combinația lor într-un singur bloc —
-oscilator explicit cu frecvență învățată + uitare dependentă de conținut +
-citire prin anvelopă, urmat de un mixer care *și leagă, și dezleagă* —
-plus faptul că totul, inclusiv autodiferențierea, este scris de la zero.
+What is original to this model: combining them in a single block — an explicit oscillator with learned frequency + content-dependent forgetting + envelope readout, followed by a mixer that *both binds and unbinds* — plus the fact that everything, including automatic differentiation, is written from scratch.
 
 ---
 
-## Structura
+## Structure
 
 ```
 rezonet/
-  autograd.py    motor de autodiferențiere reverse-mode peste NumPy
-  ops.py         osc_scan (rezonanța), circconv (legare), circcorr (dezlegare)
-  model.py       arhitectura + calea de inferență în flux
-  optim.py       AdamW, tăiere de gradient, program cosinus
-  tokenizer.py   tokenizator pe caractere, construit din corpus
-  data.py        încărcare corpus și eșantionare
+  autograd.py    reverse-mode auto-differentiation engine on top of NumPy
+  ops.py         osc_scan (resonance), circconv (binding), circcorr (unbinding)
+  model.py       architecture + streaming inference path
+  optim.py       AdamW, gradient clipping, cosine scheduler
+  tokenizer.py   character-level tokenizer built from corpus
+  data.py        corpus loading and sampling
 scripts/
-  make_corpus.py       generatorul de corpus (gramatică românească cu acorduri)
-  train.py             antrenare
-  sample.py            generare în flux (--bench pentru costul per token)
-  eval_agreement.py    test de acord gramatical, cu intervale de încredere
-  inspect_spectrum.py  ce frecvențe și scări de timp a învățat modelul
-  gradcheck.py         verificarea gradienților prin diferențe finite
-  test_consistency.py  calea paralelă = calea în flux
+  make_corpus.py       corpus generator (Romanian grammar with agreement rules)
+  train.py             training script
+  sample.py            streaming text generation (--bench for per-token latency)
+  eval_agreement.py    grammatical agreement benchmark with confidence intervals
+  inspect_spectrum.py  inspect learned frequencies and time scales
+  gradcheck.py         gradient verification via finite differences
+  test_consistency.py  parallel path == streaming path verification
 ```
 
-## Utilizare
+## Usage
 
-Generarea corpusului:
+Corpus generation:
 
 ```bash
 python3 scripts/make_corpus.py --bytes 1700000 --out corpus/ro_big.txt
 ```
 
-Antrenare:
+Training:
 
 ```bash
 python3 scripts/train.py --corpus corpus/ro_big.txt --steps 4000 --out checkpoints/model
 ```
 
-Generare de text:
+Text generation:
 
 ```bash
 python3 scripts/sample.py --ckpt checkpoints/model --prompt "Dimineața, " --n 400
 ```
 
-Poți antrena pe textul tău propriu — orice fișier `.txt` merge:
+You can train on your own text — any `.txt` file works:
 
 ```bash
-python3 scripts/train.py --corpus calea/catre/textul_tau.txt --steps 4000
+python3 scripts/train.py --corpus path/to/your_text.txt --steps 4000
 ```
 
-## Corectitudine
+## Correctness
 
-Două verificări care rulează independent de antrenare:
+Two checks that run independently of training:
 
 ```bash
-python3 scripts/gradcheck.py        # gradienți analitici vs. diferențe finite
-python3 scripts/test_consistency.py # antrenare și generare dau același rezultat
+python3 scripts/gradcheck.py        # analytical gradients vs. finite differences
+python3 scripts/test_consistency.py # training and streaming generation produce identical output
 ```
 
-Gradcheck compară fiecare gradient scris de mână cu diferențe finite în precizie
-dublă. Eroarea scade pătratic cu pasul `eps` — semnătura erorii de trunchiere,
-deci discrepanța rămasă este numerică, nu o greșeală de derivare.
+Gradcheck compares each hand-derived gradient against finite differences in double precision. The error decreases quadratically with step size `eps` — the hallmark of truncation error, proving the remaining discrepancy is numerical rather than a derivation bug.
 
 ---
 
-## Rezultate
+## Results
 
-Toate modelele: 3 blocuri, `d_model=128`, ~615.000 de parametri, antrenate pe
-CPU în 7–37 de minute. Vocabular de 45 de caractere; o predicție complet
-aleatoare ar costa 5,49 biți/caracter.
+All models: 3 blocks, `d_model=128`, ~615,000 parameters, trained on CPU in 7–37 minutes. Vocabulary size of 45 characters; a uniform random guess would cost 5.49 bits/char.
 
-| model | corpus | fereastră | dezlegare | biți/caracter |
+| model | corpus | window | unbinding | bits/char |
 |---|---|---|---|---|
-| `base` | 390 KB | 128 | nu | 0,503 |
-| `rezonet` | 390 KB | 128 | **da** | 0,504 |
-| `rezonet_v2` | 1,7 MB | 128 | da | 0,471 |
-| `rezonet_v3` | 1,7 MB | 256 | da | **0,444** |
-| `rezonet_v4` | 1,6 MB* | 256 | da | 0,387* |
+| `base` | 390 KB | 128 | no | 0.503 |
+| `rezonet` | 390 KB | 128 | **yes** | 0.504 |
+| `rezonet_v2` | 1.7 MB | 128 | yes | 0.471 |
+| `rezonet_v3` | 1.7 MB | 256 | yes | **0.444** |
+| `rezonet_v4` | 1.6 MB* | 256 | yes | 0.387* |
 
-\* `rezonet_v4` a fost antrenat pe un corpus cu altă compoziție (propoziții lungi
-mai dese), deci cifra lui **nu** este comparabilă direct cu celelalte.
+\* `rezonet_v4` was trained on a dataset with a different composition (more frequent long sentences), so its score is **not** directly comparable to the others.
 
-### Test de acord gramatical
+### Grammatical Agreement Benchmark
 
-Comparăm probabilitatea formei corecte a adjectivului cu cea a formei greșite.
-Sunt păstrate doar combinațiile care nu apar în corpusul de antrenare, deci se
-măsoară generalizarea. Șansa oarbă este 50%.
+We measure the log-probability of the correct adjective form versus the incorrect form. Only combinations that do not appear in the training corpus are evaluated, thus measuring true generalization. Chance accuracy is 50%.
 
-| sondă | distanță | `base` | `rezonet` | `rezonet_v2` | `rezonet_v3` | `rezonet_v4` |
+| probe | distance | `base` | `rezonet` | `rezonet_v2` | `rezonet_v3` | `rezonet_v4` |
 |---|---|---|---|---|---|---|
-| adjectiv lipit de substantiv | 7 car. | 96,0% | 97,8% | 100% | 100% | 100% |
-| peste o relativă + un distractor | 53 car. | 57,0% | 63,4% | 99,8% | **100%** | 99,6% |
-| peste o relativă + doi distractori | 95 car. | 48,6% | 45,8% | 52,0% | 49,0% | 54,8% |
+| adjective adjacent to noun | 7 chars | 96.0% | 97.8% | 100% | 100% | 100% |
+| across relative clause + 1 distractor | 53 chars | 57.0% | 63.4% | 99.8% | **100%** | 99.6% |
+| across relative clause + 2 distractors | 95 chars | 48.6% | 45.8% | 52.0% | 49.0% | 54.8% |
 
-(intervale de încredere 95%: ±4,4 puncte la ultimele două linii)
+(95% confidence intervals: ±4.4 percentage points on the last two rows)
 
-**Ce arată tabelul.** Sonda de la 53 de caractere este proiectată să fie
-imposibil de rezolvat prin statistici locale: între substantiv și adjectiv stă
-un alt substantiv, de gen opus, iar pronumele „care" nu trădează genul. Un model
-care s-ar uita la cuvântul precedent ar da sistematic greșit. RezoNet o rezolvă
-complet.
+**What the table shows.** The 53-character probe is designed to be impossible to solve via local statistics: between the target noun and the adjective sits another noun of opposite gender, while the relative pronoun ("care") carries no gender information. A model relying on local context would systematically fail. RezoNet solves it completely.
 
-**Ce nu funcționează, și de ce nu știm încă.** La 95 de caractere, cu doi
-distractori, modelul este la nivelul hazardului. Am testat patru explicații:
+**What doesn't work, and why.** At 95 characters with two distractors, the model performs at chance level. We tested four hypotheses:
 
-1. *Prea puține date* — de 4x mai mult text: a rezolvat cazul de 53 de caractere,
-   nu și pe cel de 95.
-2. *Fereastră de antrenare prea scurtă* — dublată la 256: fără efect.
-3. *Construcția e prea rară* — de 3,5x mai dese exemplele exact de acel tip:
-   fără efect.
-4. *Modelul nu stăpânește formele de plural* — infirmat direct: **același** acord
-   de gen la plural dă 100% la 8 caractere și hazard la 95.
+1. *Insufficient data* — 4x more training text: solved the 53-char case, but not the 95-char case.
+2. *Training window too short* — doubled to 256: no effect.
+3. *Rare construction* — 3.5x more frequent instances of this specific pattern: no effect.
+4. *Inability to handle plural forms* — directly disproved: the **exact same** plural gender agreement achieves 100% at 8 chars and chance at 95.
 
-Rămâne o limită reală de distanță a modelului la această scară, nu un artefact
-al datelor. Este exact tipul de rezultat pe care testul a fost construit să-l
-prindă.
+This indicates a genuine length boundary for the architecture at this model scale, rather than a dataset artifact. It is precisely the kind of limitation this benchmark was built to uncover.
 
-### Ce a decis singur modelul
+### Learned Spectrum and Time Scales
 
-`scripts/inspect_spectrum.py` arată constantele de timp învățate. Inițializarea
-permitea până la 1024 de caractere de memorie; modelul antrenat cu fereastră de
-128 și-a scurtat cea mai lungă constantă la **262 de caractere** și și-a grupat
-perioadele în jurul a 25–60 de caractere — aproximativ lungimea unei propoziții.
-Nu i s-a spus asta; a găsit singur scările de timp ale textului.
+`scripts/inspect_spectrum.py` reveals the learned time constants. Initialization allowed memory spans up to 1024 characters; when trained with a window size of 128, the model automatically shortened its longest time constant to **262 characters** and clustered its oscillation periods around 25–60 characters — roughly the length of a sentence. It was not instructed to do this; it discovered the time scales of the text on its own.
 
-### Cost constant la generare
+### Constant Latency During Generation
 
-`python3 scripts/sample.py --bench` măsoară timpul per token pe măsură ce
-contextul crește:
+`python3 scripts/sample.py --bench` measures per-token latency as the context grows:
 
 ```
-context generat | ms per token
-          200 | 0.312
-          600 | 0.307
-         1200 | 0.308
+generated context | ms per token
+              200 | 0.312
+              600 | 0.307
+             1200 | 0.308
 ```
 
-Plat. Un model cu atenție ar fi crescut de șase ori pe același interval.
+Completely flat. An attention-based model would have scaled ~6x over the same span.
 
-### Exemplu de generare
+### Generation Example
 
-Pornind de la „Pădurea, despre care ":
+Prompted with "Pădurea, despre care ":
 
 > Pădurea, despre care copilul a vorbit sub cerul senin, este **frumoasă**.
 
-Substantivul-cap este feminin, distractorul dintre ele („copilul") este masculin,
-iar adjectivul de la 40 de caractere distanță este acordat corect.
+The head noun ("Pădurea") is feminine, the intervening distractor ("copilul") is masculine, and the adjective 40 characters away is correctly inflected in the feminine.
 
-Sensul este absurd pentru că și corpusul este absurd — gramatica lui este
-riguroasă, semantica nu. Modelul a învățat exact ce i s-a dat.
+The semantic meaning is nonsensical because the synthetic corpus itself is nonsensical — its grammar is strict, but its semantics are randomized. The model learned exactly what it was given.
 
 ---
 
-## Limite
+## Limitations
 
-- Testat doar pe un corpus sintetic, la scară mică (~615.000 de parametri).
-  Nimic din ce scrie aici nu spune cum s-ar comporta la scară mare.
-- Acordul cedează dincolo de ~50–60 de caractere cu mai mulți distractori.
-- Recurența rulează secvențial în NumPy. Fiind liniară, ar putea fi paralelizată
-  printr-o baleiere asociativă — nu este implementat aici.
-- Fără GPU, fără paralelism pe date.
+- Tested only on a small-scale synthetic corpus (~615,000 parameters). Nothing presented here guarantees behavior at large scale.
+- Long-range agreement degrades beyond ~50–60 characters when multiple distractor nouns are introduced.
+- Sequential recurrence runs in NumPy. Being linear, it could be parallelized via associative scan — not implemented here.
+- No GPU acceleration, no data parallelism.
