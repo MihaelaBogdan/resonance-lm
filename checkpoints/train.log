@@ -1,0 +1,154 @@
+corpus  : 372,451 tokeni antrenare / 19,602 validare
+vocabular: 45 caractere
+model    : 492,416 parametri, 3 blocuri, d_model=128
+           entropie uniforma = 3.807 nats/car
+
+pas     0 | pierdere 3.6770 | lr 4.00e-05 | |g|  2.90 |    0.2s
+pas    20 | pierdere 3.0124 | lr 8.40e-04 | |g|  0.33 |    3.8s
+pas    40 | pierdere 2.1932 | lr 1.64e-03 | |g|  0.95 |    7.0s
+pas    60 | pierdere 1.5980 | lr 2.44e-03 | |g|  1.56 |   10.2s
+pas    80 | pierdere 1.0522 | lr 3.24e-03 | |g|  2.34 |   13.5s
+pas   100 | pierdere 0.7467 | lr 4.00e-03 | |g|  1.98 |   16.7s
+pas   120 | pierdere 0.5676 | lr 4.00e-03 | |g|  1.59 |   20.0s
+        -> validare 0.5589 nats = 0.8064 biti/caracter
+pas   140 | pierdere 0.5133 | lr 4.00e-03 | |g|  1.63 |   23.5s
+pas   160 | pierdere 0.4584 | lr 3.99e-03 | |g|  0.78 |   26.8s
+pas   180 | pierdere 0.4374 | lr 3.99e-03 | |g|  0.70 |   30.0s
+pas   200 | pierdere 0.4266 | lr 3.98e-03 | |g|  0.71 |   33.2s
+pas   220 | pierdere 0.4109 | lr 3.98e-03 | |g|  0.59 |   36.5s
+pas   240 | pierdere 0.3873 | lr 3.97e-03 | |g|  0.49 |   39.7s
+        -> validare 0.4031 nats = 0.5816 biti/caracter
+pas   260 | pierdere 0.4027 | lr 3.96e-03 | |g|  0.51 |   43.3s
+pas   280 | pierdere 0.4106 | lr 3.95e-03 | |g|  0.66 |   46.5s
+pas   300 | pierdere 0.3974 | lr 3.94e-03 | |g|  0.42 |   49.8s
+pas   320 | pierdere 0.3937 | lr 3.92e-03 | |g|  0.41 |   53.0s
+pas   340 | pierdere 0.4029 | lr 3.91e-03 | |g|  0.47 |   56.2s
+pas   360 | pierdere 0.3772 | lr 3.89e-03 | |g|  0.34 |   59.5s
+        -> validare 0.3939 nats = 0.5683 biti/caracter
+pas   380 | pierdere 0.3856 | lr 3.88e-03 | |g|  0.33 |   63.0s
+pas   400 | pierdere 0.3832 | lr 3.86e-03 | |g|  0.33 |   66.3s
+pas   420 | pierdere 0.3771 | lr 3.84e-03 | |g|  0.29 |   70.1s
+pas   440 | pierdere 0.3782 | lr 3.82e-03 | |g|  0.35 |   73.4s
+pas   460 | pierdere 0.3752 | lr 3.80e-03 | |g|  0.32 |   76.7s
+pas   480 | pierdere 0.3747 | lr 3.78e-03 | |g|  0.25 |   79.9s
+        -> validare 0.3649 nats = 0.5265 biti/caracter
+pas   500 | pierdere 0.3417 | lr 3.75e-03 | |g|  0.24 |   83.5s
+pas   520 | pierdere 0.3685 | lr 3.73e-03 | |g|  0.26 |   86.7s
+pas   540 | pierdere 0.3629 | lr 3.70e-03 | |g|  0.25 |   90.0s
+pas   560 | pierdere 0.3496 | lr 3.68e-03 | |g|  0.21 |   93.2s
+pas   580 | pierdere 0.3530 | lr 3.65e-03 | |g|  0.25 |   96.5s
+pas   600 | pierdere 0.3706 | lr 3.62e-03 | |g|  0.19 |   99.8s
+pas   620 | pierdere 0.3751 | lr 3.59e-03 | |g|  0.22 |  103.1s
+        -> validare 0.3690 nats = 0.5324 biti/caracter
+pas   640 | pierdere 0.3553 | lr 3.56e-03 | |g|  0.18 |  106.7s
+pas   660 | pierdere 0.3535 | lr 3.53e-03 | |g|  0.22 |  110.0s
+pas   680 | pierdere 0.3588 | lr 3.49e-03 | |g|  0.19 |  113.2s
+pas   700 | pierdere 0.3697 | lr 3.46e-03 | |g|  0.21 |  116.5s
+pas   720 | pierdere 0.3491 | lr 3.43e-03 | |g|  0.20 |  119.8s
+pas   740 | pierdere 0.3703 | lr 3.39e-03 | |g|  0.22 |  123.0s
+        -> validare 0.3554 nats = 0.5127 biti/caracter
+pas   760 | pierdere 0.3399 | lr 3.35e-03 | |g|  0.16 |  126.6s
+pas   780 | pierdere 0.3459 | lr 3.32e-03 | |g|  0.19 |  129.9s
+pas   800 | pierdere 0.3496 | lr 3.28e-03 | |g|  0.22 |  133.3s
+pas   820 | pierdere 0.3540 | lr 3.24e-03 | |g|  0.18 |  136.6s
+pas   840 | pierdere 0.3469 | lr 3.20e-03 | |g|  0.17 |  139.9s
+pas   860 | pierdere 0.3261 | lr 3.16e-03 | |g|  0.16 |  143.1s
+        -> validare 0.3515 nats = 0.5072 biti/caracter
+pas   880 | pierdere 0.3355 | lr 3.12e-03 | |g|  0.18 |  146.7s
+pas   900 | pierdere 0.3360 | lr 3.08e-03 | |g|  0.19 |  149.9s
+pas   920 | pierdere 0.3458 | lr 3.04e-03 | |g|  0.17 |  153.2s
+pas   940 | pierdere 0.3309 | lr 3.00e-03 | |g|  0.16 |  156.5s
+pas   960 | pierdere 0.3400 | lr 2.95e-03 | |g|  0.15 |  159.7s
+pas   980 | pierdere 0.3300 | lr 2.91e-03 | |g|  0.18 |  163.0s
+        -> validare 0.3530 nats = 0.5092 biti/caracter
+pas  1000 | pierdere 0.3421 | lr 2.86e-03 | |g|  0.17 |  166.5s
+pas  1020 | pierdere 0.3303 | lr 2.82e-03 | |g|  0.18 |  169.8s
+pas  1040 | pierdere 0.3381 | lr 2.77e-03 | |g|  0.17 |  173.1s
+pas  1060 | pierdere 0.3240 | lr 2.73e-03 | |g|  0.16 |  176.4s
+pas  1080 | pierdere 0.3218 | lr 2.68e-03 | |g|  0.14 |  179.7s
+pas  1100 | pierdere 0.3218 | lr 2.64e-03 | |g|  0.16 |  183.0s
+pas  1120 | pierdere 0.3199 | lr 2.59e-03 | |g|  0.13 |  186.3s
+        -> validare 0.3542 nats = 0.5110 biti/caracter
+pas  1140 | pierdere 0.3387 | lr 2.54e-03 | |g|  0.16 |  189.9s
+pas  1160 | pierdere 0.3192 | lr 2.50e-03 | |g|  0.13 |  193.2s
+pas  1180 | pierdere 0.3282 | lr 2.45e-03 | |g|  0.16 |  196.4s
+pas  1200 | pierdere 0.3257 | lr 2.40e-03 | |g|  0.15 |  199.7s
+pas  1220 | pierdere 0.3293 | lr 2.35e-03 | |g|  0.16 |  202.9s
+pas  1240 | pierdere 0.3332 | lr 2.30e-03 | |g|  0.16 |  206.2s
+        -> validare 0.3539 nats = 0.5105 biti/caracter
+pas  1260 | pierdere 0.3271 | lr 2.26e-03 | |g|  0.17 |  209.6s
+pas  1280 | pierdere 0.3372 | lr 2.21e-03 | |g|  0.15 |  212.8s
+pas  1300 | pierdere 0.3121 | lr 2.16e-03 | |g|  0.14 |  216.1s
+pas  1320 | pierdere 0.3297 | lr 2.11e-03 | |g|  0.18 |  219.3s
+pas  1340 | pierdere 0.3065 | lr 2.06e-03 | |g|  0.16 |  222.5s
+pas  1360 | pierdere 0.3369 | lr 2.02e-03 | |g|  0.17 |  225.8s
+        -> validare 0.3489 nats = 0.5033 biti/caracter
+pas  1380 | pierdere 0.3144 | lr 1.97e-03 | |g|  0.14 |  229.3s
+pas  1400 | pierdere 0.3238 | lr 1.92e-03 | |g|  0.17 |  232.6s
+pas  1420 | pierdere 0.3217 | lr 1.87e-03 | |g|  0.14 |  235.8s
+pas  1440 | pierdere 0.3153 | lr 1.82e-03 | |g|  0.17 |  239.1s
+pas  1460 | pierdere 0.2979 | lr 1.78e-03 | |g|  0.16 |  242.3s
+pas  1480 | pierdere 0.3166 | lr 1.73e-03 | |g|  0.17 |  245.6s
+        -> validare 0.3525 nats = 0.5086 biti/caracter
+pas  1500 | pierdere 0.3255 | lr 1.68e-03 | |g|  0.17 |  249.1s
+pas  1520 | pierdere 0.3216 | lr 1.64e-03 | |g|  0.15 |  252.3s
+pas  1540 | pierdere 0.2958 | lr 1.59e-03 | |g|  0.15 |  255.6s
+pas  1560 | pierdere 0.3038 | lr 1.55e-03 | |g|  0.16 |  258.9s
+pas  1580 | pierdere 0.3086 | lr 1.50e-03 | |g|  0.16 |  262.1s
+pas  1600 | pierdere 0.3014 | lr 1.46e-03 | |g|  0.17 |  265.4s
+pas  1620 | pierdere 0.3203 | lr 1.41e-03 | |g|  0.16 |  268.6s
+        -> validare 0.3554 nats = 0.5128 biti/caracter
+pas  1640 | pierdere 0.3022 | lr 1.37e-03 | |g|  0.16 |  272.2s
+pas  1660 | pierdere 0.3064 | lr 1.32e-03 | |g|  0.17 |  275.4s
+pas  1680 | pierdere 0.2929 | lr 1.28e-03 | |g|  0.15 |  278.7s
+pas  1700 | pierdere 0.3066 | lr 1.24e-03 | |g|  0.16 |  282.0s
+pas  1720 | pierdere 0.3036 | lr 1.20e-03 | |g|  0.17 |  285.2s
+pas  1740 | pierdere 0.2886 | lr 1.16e-03 | |g|  0.17 |  288.5s
+        -> validare 0.3557 nats = 0.5132 biti/caracter
+pas  1760 | pierdere 0.2906 | lr 1.12e-03 | |g|  0.15 |  292.0s
+pas  1780 | pierdere 0.2968 | lr 1.08e-03 | |g|  0.19 |  295.3s
+pas  1800 | pierdere 0.2992 | lr 1.04e-03 | |g|  0.18 |  298.6s
+pas  1820 | pierdere 0.2973 | lr 1.00e-03 | |g|  0.18 |  301.8s
+pas  1840 | pierdere 0.3034 | lr 9.65e-04 | |g|  0.20 |  305.1s
+pas  1860 | pierdere 0.3034 | lr 9.29e-04 | |g|  0.19 |  308.4s
+        -> validare 0.3600 nats = 0.5193 biti/caracter
+pas  1880 | pierdere 0.2913 | lr 8.93e-04 | |g|  0.18 |  311.9s
+pas  1900 | pierdere 0.2971 | lr 8.59e-04 | |g|  0.17 |  315.2s
+pas  1920 | pierdere 0.2994 | lr 8.25e-04 | |g|  0.19 |  318.4s
+pas  1940 | pierdere 0.2745 | lr 7.93e-04 | |g|  0.20 |  321.7s
+pas  1960 | pierdere 0.3014 | lr 7.61e-04 | |g|  0.20 |  324.9s
+pas  1980 | pierdere 0.2968 | lr 7.30e-04 | |g|  0.21 |  328.2s
+        -> validare 0.3708 nats = 0.5349 biti/caracter
+pas  2000 | pierdere 0.2969 | lr 7.00e-04 | |g|  0.21 |  331.8s
+pas  2020 | pierdere 0.2810 | lr 6.71e-04 | |g|  0.19 |  335.1s
+pas  2040 | pierdere 0.2731 | lr 6.44e-04 | |g|  0.20 |  338.3s
+pas  2060 | pierdere 0.2840 | lr 6.17e-04 | |g|  0.18 |  341.6s
+pas  2080 | pierdere 0.2926 | lr 5.91e-04 | |g|  0.21 |  344.8s
+pas  2100 | pierdere 0.2874 | lr 5.67e-04 | |g|  0.21 |  348.1s
+pas  2120 | pierdere 0.2663 | lr 5.43e-04 | |g|  0.20 |  351.4s
+        -> validare 0.3701 nats = 0.5340 biti/caracter
+pas  2140 | pierdere 0.2688 | lr 5.21e-04 | |g|  0.18 |  354.9s
+pas  2160 | pierdere 0.2751 | lr 4.99e-04 | |g|  0.22 |  358.2s
+pas  2180 | pierdere 0.2748 | lr 4.79e-04 | |g|  0.19 |  361.4s
+pas  2200 | pierdere 0.2803 | lr 4.60e-04 | |g|  0.21 |  364.7s
+pas  2220 | pierdere 0.2744 | lr 4.42e-04 | |g|  0.22 |  368.0s
+pas  2240 | pierdere 0.2829 | lr 4.26e-04 | |g|  0.21 |  371.2s
+        -> validare 0.3747 nats = 0.5406 biti/caracter
+pas  2260 | pierdere 0.2628 | lr 4.10e-04 | |g|  0.19 |  374.8s
+pas  2280 | pierdere 0.2850 | lr 3.96e-04 | |g|  0.21 |  378.0s
+pas  2300 | pierdere 0.2639 | lr 3.83e-04 | |g|  0.21 |  381.3s
+pas  2320 | pierdere 0.2622 | lr 3.71e-04 | |g|  0.19 |  384.5s
+pas  2340 | pierdere 0.2743 | lr 3.60e-04 | |g|  0.21 |  387.8s
+pas  2360 | pierdere 0.2610 | lr 3.51e-04 | |g|  0.20 |  391.1s
+        -> validare 0.3801 nats = 0.5484 biti/caracter
+pas  2380 | pierdere 0.2893 | lr 3.43e-04 | |g|  0.23 |  394.6s
+pas  2400 | pierdere 0.2637 | lr 3.36e-04 | |g|  0.22 |  397.9s
+pas  2420 | pierdere 0.2738 | lr 3.30e-04 | |g|  0.22 |  401.1s
+pas  2440 | pierdere 0.2727 | lr 3.26e-04 | |g|  0.21 |  404.4s
+pas  2460 | pierdere 0.2722 | lr 3.23e-04 | |g|  0.22 |  407.7s
+pas  2480 | pierdere 0.2652 | lr 3.21e-04 | |g|  0.22 |  410.9s
+pas  2499 | pierdere 0.2597 | lr 3.20e-04 | |g|  0.21 |  414.0s
+        -> validare 0.3863 nats = 0.5573 biti/caracter
+
+cea mai buna validare: 0.3489 nats = 0.5033 biti/caracter
+salvat in /Users/mihaela/Desktop/AI MODEL/checkpoints/rezonet.npz  (414s total)

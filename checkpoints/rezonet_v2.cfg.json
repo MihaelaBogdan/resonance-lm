@@ -1,0 +1,1 @@
+{"vocab_size": 45, "d_model": 128, "n_layers": 3, "d_bind": 160, "seed": 1337, "tau_min": 1.5, "tau_max": 1024.0, "unbind": true}
